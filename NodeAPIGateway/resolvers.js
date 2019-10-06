@@ -30,21 +30,22 @@ const GQDate = new GraphQLScalarType({
 });
 
 // data store with default data
+// TODO db
 /*const Notices = [
   {
     id: 1,
-    topic: "Johan",
+    topic: "John",
     description: "Peter",
-    dateOfCreation: new Date("2014-08-31"),
-    email: "johan@gmail.com",
-    password: "johan123",
+    dateOfSubmission: new Date("2014-08-31"),
+    email: "John@gmail.com",
+    password: "John123",
     country: "UK"
   },
   {
     id: 2,
     topic: "Mohamed",
     description: "Tariq",
-    dateOfCreation: new Date("1981-11-24"),
+    dateOfSubmission: new Date("1981-11-24"),
     email: "tariq@gmail.com",
     password: "tariq123",
     country: "UAE"
@@ -53,7 +54,7 @@ const GQDate = new GraphQLScalarType({
     id: 3,
     topic: "Nirmal",
     description: "Kumar",
-    dateOfCreation: new Date("1991-09-02"),
+    dateOfSubmission: new Date("1991-09-02"),
     email: "nirmal@gmail.com",
     password: "nirmal123",
     country: "India"
@@ -71,6 +72,9 @@ const resolvers = {
     Mutation: {
         // create a new Notice
         createNotice: (root, args) => {
+            Notices[index].email = args.email;
+            Notices[index].password = args.password;
+            Notices[index].country = args.country;
             // get next Notice id
             const nextId =
                 Notices.reduce((id, Notice) => {
@@ -80,7 +84,7 @@ const resolvers = {
                 id: nextId,
                 topic: args.topic,
                 description: args.description,
-                dateOfCreation: args.dateOfCreation
+                dateOfSubmission: args.dateOfSubmission
             };
             // add Notice to collection
             Notices.push(newNotice);
@@ -101,7 +105,7 @@ const resolvers = {
             );
             Notices[index].topic = args.topic;
             Notices[index].description = args.description;
-            Notices[index].dateOfCreation = args.dateOfCreation;
+            Notices[index].dateOfSubmission = args.dateOfSubmission;
             return Notices[index];
         }
     },
