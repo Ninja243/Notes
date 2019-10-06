@@ -15,5 +15,11 @@
   "bugs": {
     "url": "https://github.com/Ninja243/Notes/issues"
   },
-  "homepage": "https://github.com/Ninja243/Notes#readme"
+  "homepage": "https://github.com/Ninja243/Notes#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "express-graphql": "^0.9.0",
+    "graphql": "^14.5.8"
+  },
+  "devDependencies": {}
 }
