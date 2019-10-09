@@ -39,6 +39,8 @@ listener http:Listener test = new (9090, config = {
 @http:ServiceConfig {
     basePath: "/notes"
 }
+// TODO Service for push/pull from db
+// TODO Gossip service here
 service testtube on new http:Listener(9090) {
     resource function testresource(http:Caller c, http:Request r, json test) {
 
