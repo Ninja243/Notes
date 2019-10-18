@@ -1,3 +1,4 @@
+import ballerina/crypto;
 import ballerina/docker;
 import ballerina/http;
 // ?
@@ -7,9 +8,13 @@ import ballerina/kubernetes;
 //import wso2/mongodb;
 
 map<Ledger> DataStore = {};
-Ledger newLegerForGossip = null;
+Ledger newLedgerForGossip = {
+    notice: "",
+    noticeHash: "",
+    prevLedgerHash: ""
+};
 
-type Ledger record {
+public type Ledger record {
     string noticeHash;
     string notice;
     string prevLedgerHash;
@@ -65,22 +70,35 @@ service testtube on l {
 }
 service gossip on l {
     @http:ResourceConfig {
-
+        methods: ["GET"]
     }
-    resource function getLatest(http:Caller c, http:Request r) {
+    resource function getLatest(http:Caller c, http:Request r) returns error? {
         http:Response resp = new;
-        var ledger = newLegerForGossip.toJsonString();
+        json ledger = {"note": newLedgerForGossip.notice, "noteHash": newLedgerForGossip.noticeHash, "previousNoteHash": newLedgerForGossip.prevLedgerHash};
         json newGossip = {"Ledger": ledger};
-        int j = 0;
-
         resp.setJsonPayload(newGossip);
+        resp.statusCode = 200;
+        var x = c->respond(resp);
+        if (x is error) {
+            io:println(x);
+        }
     }
     @http:ResourceConfig {
-
+        methods: 
     }
     resource function giveLatest(http:Caller c, http:Request r) {
 
     }
+}
+
+public function genNewLedger(string note, Ledger prev) returns Ledger {
+    Ledger toreturn = {
+        notice: note,
+        noticeHash: crypto:hashSha512(note.toBytes()).toString(),
+        prevLedgerHash: prev.prevLedgerHash
+    };
+
+    return toreturn;
 }
 
 // Prints `Hello World`.
