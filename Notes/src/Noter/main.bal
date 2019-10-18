@@ -84,7 +84,7 @@ service gossip on l {
         }
     }
     @http:ResourceConfig {
-        methods: 
+        methods: ["POST"]
     }
     resource function giveLatest(http:Caller c, http:Request r) {
 
