@@ -29,6 +29,8 @@ const GQDate = new GraphQLScalarType({
     }
 });
 
+Notices = {};
+
 // data store with default data
 // TODO db
 /*const Notices = [

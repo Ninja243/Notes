@@ -4,6 +4,16 @@ import ballerina/http;
 import ballerina/io;
 import ballerina/kubernetes;
 //import ballerina/log;
+//import wso2/mongodb;
+
+map<Ledger> DataStore = {};
+Ledger newLegerForGossip = null;
+
+type Ledger record {
+    string noticeHash;
+    string notice;
+    string prevLedgerHash;
+};
 
 @docker:Config {
     name: "Noter",
@@ -36,16 +46,43 @@ listener http:Listener test = new (9090, config = {
     image: "localhost/Noter:v0.1",
     name: "Notes"
 }
+
+// TODO Service for push/pull from db
+
+listener http:Listener l = new (9090);
 @http:ServiceConfig {
     basePath: "/notes"
 }
-// TODO Service for push/pull from db
-// TODO Gossip service here
-service testtube on new http:Listener(9090) {
+service testtube on l {
     resource function testresource(http:Caller c, http:Request r, json test) {
 
     }
 }
+
+// TODO Gossip service here
+@http:ServiceConfig {
+    basePath: "/notes"
+}
+service gossip on l {
+    @http:ResourceConfig {
+
+    }
+    resource function getLatest(http:Caller c, http:Request r) {
+        http:Response resp = new;
+        var ledger = newLegerForGossip.toJsonString();
+        json newGossip = {"Ledger": ledger};
+        int j = 0;
+
+        resp.setJsonPayload(newGossip);
+    }
+    @http:ResourceConfig {
+
+    }
+    resource function giveLatest(http:Caller c, http:Request r) {
+
+    }
+}
+
 // Prints `Hello World`.
 
 public function main() {

@@ -17,9 +17,13 @@
   },
   "homepage": "https://github.com/Ninja243/Notes#readme",
   "dependencies": {
+    "babel-cli": "6",
+    "babel-preset-react-app": "3",
+    "cors": "^2.8.5",
     "express": "^4.17.1",
     "express-graphql": "^0.9.0",
-    "graphql": "^14.5.8"
+    "graphql": "^14.5.8",
+    "graphql-tools": "^4.0.5"
   },
   "devDependencies": {}
 }

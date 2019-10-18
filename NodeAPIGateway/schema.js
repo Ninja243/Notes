@@ -15,11 +15,11 @@ type Query {
     # Return a Notice by id
     Notice(id: ID!): Notice
     # Return a Notice by Topic
-    Notice(topic: String): Notice
+    #Notice(topic: String): Notice
     # Return a Notice by Description
-    Notice(description: String): Notice
+    #Notice(description: String): Notice
     # Return a Notice by date
-    Notice(dateOfSubmission: GQDate): Notice
+    #Notice(dateOfSubmission: GQDate): Notice
     # Return all Notices
     Notices(limit: Int): [Notice]
 }
