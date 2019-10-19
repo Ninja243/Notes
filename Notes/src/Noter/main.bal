@@ -4,6 +4,7 @@ import ballerina/http;
 // ?
 import ballerina/io;
 import ballerina/kubernetes;
+import ballerina/mime;
 //import ballerina/log;
 //import wso2/mongodb;
 
@@ -84,10 +85,15 @@ service gossip on l {
         }
     }
     @http:ResourceConfig {
-        methods: ["POST"]
+        methods: ["POST"],
+        path: "/giveLatest"
     }
-    resource function giveLatest(http:Caller c, http:Request r) {
+    resource function giveLatest(http:Caller c, http:Request r) returns error?{
+        if (r.hasHeader("content-type")) {
+            string content = r.getContentType();
+            //string baseType = mime:getMediaType(content);
 
+        }
     }
 }
 
