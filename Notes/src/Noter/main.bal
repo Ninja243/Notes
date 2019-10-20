@@ -163,10 +163,8 @@ service gossip on l {
             // If JSON, check for Ledger information, then add it to a the new ledger and to the data store
 
             // TODO
-<<<<<<< HEAD
             if (content == "") {
                 //
-=======
             var newGossip = r.getJsonPayload();
             if (newGossip is json) {
 
@@ -174,14 +172,13 @@ service gossip on l {
                 http:Response resp = new;
                 resp.setPayload("Error");
                 var x = c -> respond();
->>>>>>> 8528dd174186099946dd39c477c99021faf2db5f
             }
         }
     }
 }
 
 // Get the date and add the right time record to the data store if it does not exist
-public function addLedgerToDataStore(Ledger l) returns error? {
+function addLedgerToDataStore(Ledger l) returns error? {
     time:Time currentTime = time:currentTime();
     string thisYear = time:getYear(currentTime).toString();
     string thisMonth = time:getMonth(currentTime).toString();
@@ -375,7 +372,7 @@ public function addLedgerToDataStore(Ledger l) returns error? {
     }
 }
 
-public function genNewLedger(string note, Ledger prev) returns Ledger {
+function genNewLedger(string note, Ledger prev) returns Ledger {
     Ledger toreturn = {
         notice: note,
         noticeHash: crypto:hashSha512(note.toBytes()).toString(),
@@ -383,6 +380,7 @@ public function genNewLedger(string note, Ledger prev) returns Ledger {
     };
 
     return toreturn;
+}
 }
 
 // Prints `Hello World`.
