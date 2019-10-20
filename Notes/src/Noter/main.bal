@@ -44,7 +44,6 @@ public type year record {
     month[] Month;
 
 };
-
 Ledger newLedgerForGossip = {
     notice: "",
     noticeHash: "",
@@ -136,8 +135,13 @@ service gossip on l {
             //string baseType = mime:getMediaType(content);
             // If JSON, check for Ledger information, then add it to a the new ledger and to the data store
             // TODO
-            if (content == "") {
+            var newGossip = r.getJsonPayload();
+            if (newGossip is json) {
 
+            } else {
+                http:Response resp = new;
+                resp.setPayload("Error");
+                var x = c -> respond();
             }
         }
     }
