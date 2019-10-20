@@ -107,7 +107,7 @@ listener http:Listener l = new (9090);
 @http:ServiceConfig {
     basePath: "/notes"
 }
-service testtube on l {
+service testtube on new http:Listener(9091) {
     resource function testresource(http:Caller c, http:Request r, json test) {
 
     }
@@ -117,7 +117,7 @@ service testtube on l {
 @http:ServiceConfig {
     basePath: "/notes"
 }
-service gossip on l {
+service gossip on new http:Listener(9092) {
     @http:ResourceConfig {
         methods: ["POST"]
     }
