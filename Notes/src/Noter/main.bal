@@ -11,7 +11,10 @@ import ballerina/time;
 //import ballerina/log;
 //import wso2/mongodb;
 
-//
+// The number assigned to this instance by the gateway.
+// 0   <- not set
+// 1-5 <- legal
+// 5<  <- illegal
 int myInstanceNumber = 0;
 
 // Map of year records which contain up to 12 month records
@@ -107,8 +110,8 @@ service gossip on l {
         methods: ["POST"]
     }
     resource function setInstanceNumber(http:Caller c, http:Request r) returns error? {
-        // Get int given
-        // set instance number to int
+    // Get int given
+    // set TODO instance number to int
     }
     // TODO gossip init
     @http:ResourceConfig {
@@ -143,7 +146,7 @@ service gossip on l {
 }
 
 // Get the date and add the right time record to the data store if it does not exist
-// TODO search week, search day, add month, add week, add day, insert ledger
+// TODO add month, add week
 public function addLedgerToDataStore(Ledger l) returns error? {
     time:Time currentTime = time:currentTime();
     string thisYear = time:getYear(currentTime).toString();
@@ -156,7 +159,7 @@ public function addLedgerToDataStore(Ledger l) returns error? {
         t = t + 1;
     }
     // Make sure we don't overshoot
-    t = t-1;
+    t = t - 1;
     string thisWeek = t.toString();
     int j = 0;
     if DataStore.hasKey(thisYear) {
@@ -173,23 +176,78 @@ public function addLedgerToDataStore(Ledger l) returns error? {
                 j = j + 1;
             }
             if (monthFound) {
-            // Get Month
-            month Month = Year.Month[j];
-            // Search for the right week in the month
-            boolean weekFound = false;
-            j = 0;
-            while (j<Month.length()) {
-                if (Month.Week[j].toString() == thisWeek ) {
-                    weekFound = true;
-                    break;
+                // Get Month
+                month Month = Year.Month[j];
+                // Search for the right week in the month
+                boolean weekFound = false;
+                j = 0;
+                while (j < Month.length()) {
+                    if (Month.Week[j].toString() == thisWeek) {
+                        weekFound = true;
+                        break;
+                    }
+                    j = j + 1;
                 }
-                j = j+1;
-            }
+                if (weekFound) {
+                    week Week = Month.Week[j];
+                    // Search for the right day
+                    j = 0;
+                    boolean dayFound = false;
+                    while (j < Week.length()) {
+                        if (Week.Day[j].toString() == thisDay) {
+                            dayFound = true;
+                            break;
+                        }
+                        j = j + 1;
+                    }
+                    if (dayFound) {
+                        day Day = Week.Day[j];
+                        // Add the ledger to the array in the right day
+                        Day.ledger[Day.ledger.length()] = l;
+                    } else {
+                        // Add day to week and ledger to day
+                        Ledger[] ledgers = [];
+                        ledgers[ledgers.length()] = l;
+                        day Day = {
+                            ledger: ledgers
+                        };
+                        Week.Day[iThisDay] = Day;
+                    }
+                } else {
+                    // Add week to month, day to week, ledger to day
+                    Ledger[] ledgers = [];
+                    ledgers[ledgers.length()] = l;
+                    day Day = {
+                        ledger: ledgers
+                    };
+                    day[] Days = [];
+                    Days[iThisDay] = Day;
+                    week Week = {
+                        Day: Days
+                    };
+                    Month.Week[t] = Week;
+                }
             } else {
-            // Add Month
-
+            // Add Month to year, week to month, day to week, ledger to day
+            Ledger[] ledgers = [];
+                    ledgers[ledgers.length()] = l;
+                    day Day = {
+                        ledger: ledgers
+                    };
+                    day[] Days = [];
+                    Days[iThisDay] = Day;
+                    week Week = {
+                        Day: Days
+                    };
+                    week[] Weeks = [];
+                    Weeks[t] = Week;
+                    month Month = {
+                        Week: Weeks
+                    };
+                    Month.Week[t] = Week;
             }
         } else {
+            // Year isn't a year?
             io:println("Panic");
         }
     } else {
@@ -240,13 +298,13 @@ public function addLedgerToDataStore(Ledger l) returns error? {
     var Year = DataStore[thisYear];
     if (Year is year) {
         if (Year.Month.length() > 12) {
-            // Panic
+        // Panic
         }
         if (Year.Month.length() < 0) {
-            // Panic
+        // Panic
         }
     } else {
-        // Panic
+    // Panic
     }
 }
 
