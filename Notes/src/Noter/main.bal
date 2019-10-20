@@ -44,7 +44,6 @@ public type year record {
     month[] Month;
 
 };
-
 Ledger newLedgerForGossip = {
     notice: "",
     noticeHash: "",
@@ -151,8 +150,13 @@ service gossip on l {
             //string baseType = mime:getMediaType(content);
             // If JSON, check for Ledger information, then add it to a the new ledger and to the data store
             // TODO
-            if (content == "") {
+            var newGossip = r.getJsonPayload();
+            if (newGossip is json) {
 
+            } else {
+                http:Response resp = new;
+                resp.setPayload("Error");
+                var x = c -> respond();
             }
         }
     }
@@ -311,8 +315,10 @@ public function addLedgerToDataStore(Ledger l) returns error? {
         // Look through the months stored to make sure there are the right amount of them
         if (Year.Month.length() > 12) {
         // Panic
+        io:println("Invalid option, oopsie");
         } else if (Year.Month.length() < 0) {
         // Panic
+        io:println("Invalid option, oopsie");
         } else {
             // Year is ok
             j = 0;
@@ -320,8 +326,10 @@ public function addLedgerToDataStore(Ledger l) returns error? {
                 // Look through the weeks stored to make sure there are the right amount of them
                 if (Year.Month[j].Week.length() > 52) {
                     // Panic
+                    io:println("Invalid option, oopsie");
                 } else if (Year.Month[j].Week.length() < 0) {
                     // Panic
+                    io:println("Invalid option, oopsie");
                 } else {
                     // Month ok
                     int i = 0;
@@ -329,8 +337,10 @@ public function addLedgerToDataStore(Ledger l) returns error? {
                     while (i<Year.Month[j].Week.length()) {
                         if (Year.Month[j].Week[i].length() > 7) {
                             // Panic
+                            io:println("Invalid option, oopsie");
                         } else if (Year.Month[j].Week[i].length() < 0) {
                             // Panic
+                            io:println("Invalid option, oopsie");
                         } else {
                             // Week ok, everything seems fine
                         }
@@ -343,6 +353,7 @@ public function addLedgerToDataStore(Ledger l) returns error? {
 
     } else {
     // Panic
+    io:println("Invalid option, oopsie");
     }
 }
 
