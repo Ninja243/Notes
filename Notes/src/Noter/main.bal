@@ -6,11 +6,13 @@ import ballerina/io;
 import ballerina/kubernetes;
 //import ballerina/lang.'error;
 import ballerina/time;
+//import ballerina/math;
 //import ballerina/mime;
 //import ballerina/log;
 //import wso2/mongodb;
 
 //
+int myInstanceNumber = 0;
 
 // Map of year records which contain up to 12 month records
 // each which contain up to 4 week records each which contain
@@ -84,7 +86,7 @@ listener http:Listener test = new (9090, config = {
     name: "Notes"
 }
 
-// TODO Service for push/pull from db
+// TODO Service for push/pull from db <- xD
 
 listener http:Listener l = new (9090);
 @http:ServiceConfig {
@@ -101,6 +103,14 @@ service testtube on l {
     basePath: "/notes"
 }
 service gossip on l {
+    @http:ResourceConfig {
+        methods: ["POST"]
+    }
+    resource function setInstanceNumber(http:Caller c, http:Request r) returns error? {
+        // Get int given
+        // set instance number to int
+    }
+    // TODO gossip init
     @http:ResourceConfig {
         methods: ["GET"]
     }
@@ -124,6 +134,7 @@ service gossip on l {
             string content = r.getContentType();
             //string baseType = mime:getMediaType(content);
             // If JSON, check for Ledger information, then add it to a the new ledger and to the data store
+            // TODO
             if (content == "") {
 
             }
@@ -132,11 +143,21 @@ service gossip on l {
 }
 
 // Get the date and add the right time record to the data store if it does not exist
+// TODO search week, search day, add month, add week, add day, insert ledger
 public function addLedgerToDataStore(Ledger l) returns error? {
     time:Time currentTime = time:currentTime();
     string thisYear = time:getYear(currentTime).toString();
     string thisMonth = time:getMonth(currentTime).toString();
     string thisDay = time:getDay(currentTime).toString();
+    int iThisDay = time:getMonth(currentTime);
+    // Work out the number of weeks that have passed since the day in this month
+    int t = 0;
+    while (t * 7 < iThisDay) {
+        t = t + 1;
+    }
+    // Make sure we don't overshoot
+    t = t-1;
+    string thisWeek = t.toString();
     int j = 0;
     if DataStore.hasKey(thisYear) {
         var Year = DataStore[thisYear];
@@ -147,12 +168,23 @@ public function addLedgerToDataStore(Ledger l) returns error? {
             while (j < Year.Month.length()) {
                 if (Year.Month[j].toString() == thisMonth) {
                     monthFound = true;
+                    break;
                 }
                 j = j + 1;
             }
             if (monthFound) {
             // Get Month
-            //var Month = DataStore
+            month Month = Year.Month[j];
+            // Search for the right week in the month
+            boolean weekFound = false;
+            j = 0;
+            while (j<Month.length()) {
+                if (Month.Week[j].toString() == thisWeek ) {
+                    weekFound = true;
+                    break;
+                }
+                j = j+1;
+            }
             } else {
             // Add Month
 
@@ -163,9 +195,9 @@ public function addLedgerToDataStore(Ledger l) returns error? {
     } else {
         int iThisYear = time:getYear(currentTime);
         int iThisMonth = time:getMonth(currentTime);
-        int iThisDay = time:getMonth(currentTime);
+        //int iThisDay = time:getMonth(currentTime);
         // Work out the number of weeks that have passed since the day in this month
-        int t = 0;
+        //int t = 0;
         while (t * 7 < iThisDay) {
             t = t + 1;
         }
@@ -203,7 +235,19 @@ public function addLedgerToDataStore(Ledger l) returns error? {
         DataStore[thisYear] = Year;
 
     }
-// Make sure there are an appropriate amount of records nested (13 months would be illegal for example)
+    // Make sure there are an appropriate amount of records nested (13 months would be illegal for example)
+    // TODO Panics, Month, Week, Day
+    var Year = DataStore[thisYear];
+    if (Year is year) {
+        if (Year.Month.length() > 12) {
+            // Panic
+        }
+        if (Year.Month.length() < 0) {
+            // Panic
+        }
+    } else {
+        // Panic
+    }
 }
 
 public function genNewLedger(string note, Ledger prev) returns Ledger {
