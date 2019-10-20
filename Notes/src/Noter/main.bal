@@ -44,7 +44,6 @@ public type year record {
     month[] Month;
 
 };
-
 Ledger newLedgerForGossip = {
     notice: "",
     noticeHash: "",
@@ -71,11 +70,11 @@ listener http:Listener test = new (9090, config = {
 
     secureSocket: {
         keyStore: {
-            path: "C:/Program Files/Ballerina/ballerina-1.0.1/distributions/jballerina-1.0.1/bre/security/ballerinaKeystore.p12",
+            path: "${ballerina.home}/bre/security/ballerinaKeystore.p12",
             password: "ballerina"
         },
         trustStore: {
-            path: "C:/Program Files/Ballerina/ballerina-1.0.1/distributions/jballerina-1.0.1/bre/security/ballerinaTruststore.p12",
+            path: "${ballerina.home}/bre/security/ballerinaTruststore.p12",
             password: "ballerina"
         }
     }
@@ -164,8 +163,18 @@ service gossip on l {
             // If JSON, check for Ledger information, then add it to a the new ledger and to the data store
 
             // TODO
+<<<<<<< HEAD
             if (content == "") {
                 //
+=======
+            var newGossip = r.getJsonPayload();
+            if (newGossip is json) {
+
+            } else {
+                http:Response resp = new;
+                resp.setPayload("Error");
+                var x = c -> respond();
+>>>>>>> 8528dd174186099946dd39c477c99021faf2db5f
             }
         }
     }
