@@ -125,6 +125,7 @@ service gossip on l {
     resource function setInstanceNumber(http:Caller c, http:Request r) returns error? {
     // Get int given
     // set TODO instance number to int
+    //getting int, set instence to the one the int that was given
     }
     // TODO gossip init
     @http:ResourceConfig {
@@ -152,7 +153,7 @@ service gossip on l {
             // If JSON, check for Ledger information, then add it to a the new ledger and to the data store
             // TODO
             if (content == "") {
-
+                
             }
         }
     }
