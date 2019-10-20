@@ -65,19 +65,34 @@ public type Ledger record {
     name: "Notes",
     path: "/"
 }
+
 listener http:Listener test = new (9090, config = {
 
     secureSocket: {
         keyStore: {
-            path: "/usr/lib/ballerina/ballerina-1.0.1/distributions/jballerina-1.0.1/bre/security/ballerinaKeystore.p12",
+            path: "C:/Program Files/Ballerina/ballerina-1.0.1/distributions/jballerina-1.0.1/bre/security/ballerinaKeystore.p12",
             password: "ballerina"
         },
         trustStore: {
-            path: "/usr/lib/ballerina/ballerina-1.0.1/distributions/jballerina-1.0.1/bre/security/ballerinaTruststore.p12",
+            path: "C:/Program Files/Ballerina/ballerina-1.0.1/distributions/jballerina-1.0.1/bre/security/ballerinaTruststore.p12",
             password: "ballerina"
         }
     }
 });
+
+//listener http:Listener test = new (9090, config = {
+//
+//    secureSocket: {
+//        keyStore: {
+//            path: "/usr/lib/ballerina/ballerina-1.0.1/distributions/jballerina-1.0.1/bre/security/ballerinaKeystore.p12",
+//            password: "ballerina"
+  //      },
+    //    trustStore: {
+      //      path: "/usr/lib/ballerina/ballerina-1.0.1/distributions/jballerina-1.0.1/bre/security/ballerinaTruststore.p12",
+        //    password: "ballerina"
+        //}
+    //}
+//});
 
 @kubernetes:Service {
     serviceType: "NodePort",
@@ -300,8 +315,10 @@ public function addLedgerToDataStore(Ledger l) returns error? {
         // Look through the months stored to make sure there are the right amount of them
         if (Year.Month.length() > 12) {
         // Panic
+        io:println("Invalid option, oopsie");
         } else if (Year.Month.length() < 0) {
         // Panic
+        io:println("Invalid option, oopsie");
         } else {
             // Year is ok
             j = 0;
@@ -309,8 +326,10 @@ public function addLedgerToDataStore(Ledger l) returns error? {
                 // Look through the weeks stored to make sure there are the right amount of them
                 if (Year.Month[j].Week.length() > 52) {
                     // Panic
+                    io:println("Invalid option, oopsie");
                 } else if (Year.Month[j].Week.length() < 0) {
                     // Panic
+                    io:println("Invalid option, oopsie");
                 } else {
                     // Month ok
                     int i = 0;
@@ -318,8 +337,10 @@ public function addLedgerToDataStore(Ledger l) returns error? {
                     while (i<Year.Month[j].Week.length()) {
                         if (Year.Month[j].Week[i].length() > 7) {
                             // Panic
+                            io:println("Invalid option, oopsie");
                         } else if (Year.Month[j].Week[i].length() < 0) {
                             // Panic
+                            io:println("Invalid option, oopsie");
                         } else {
                             // Week ok, everything seems fine
                         }
@@ -332,6 +353,7 @@ public function addLedgerToDataStore(Ledger l) returns error? {
 
     } else {
     // Panic
+    io:println("Invalid option, oopsie");
     }
 }
 
