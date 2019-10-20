@@ -124,6 +124,25 @@ service gossip on new http:Listener(9092) {
     resource function setInstanceNumber(http:Caller c, http:Request r) returns error? {
     // Get int given
     // set TODO instance number to int
+//-----trying some stuff that likely makes no sense
+    //getting int, set instence to the one the int that was given
+    //json response = {
+        //"instanceNo": instanceNo
+    //};
+    //instanceNo = instenaceNo.r;
+    // json[] instanceJson;
+    //http:Client instan = new("http://localhost:8080");
+    // json[instanceJson.length()] = MyInstanceNumber;
+    // var r = c->respond(MyInstanceNumber);
+    // var newInstance = r.getJsonPayload();
+    //         if (newInstance is json) {
+
+    //         } else {
+    //             http:Response resp = new;
+    //             resp.setPayload("Error");
+    //             var x = c -> respond();
+    //         }
+    
     }
     // TODO gossip init
     @http:ResourceConfig {
@@ -149,7 +168,10 @@ service gossip on new http:Listener(9092) {
             string content = r.getContentType();
             //string baseType = mime:getMediaType(content);
             // If JSON, check for Ledger information, then add it to a the new ledger and to the data store
+
             // TODO
+            if (content == "") {
+                //
             var newGossip = r.getJsonPayload();
             if (newGossip is json) {
 
@@ -163,7 +185,7 @@ service gossip on new http:Listener(9092) {
 }
 
 // Get the date and add the right time record to the data store if it does not exist
-public function addLedgerToDataStore(Ledger l) returns error? {
+function addLedgerToDataStore(Ledger l) returns error? {
     time:Time currentTime = time:currentTime();
     string thisYear = time:getYear(currentTime).toString();
     string thisMonth = time:getMonth(currentTime).toString();
@@ -357,7 +379,7 @@ public function addLedgerToDataStore(Ledger l) returns error? {
     }
 }
 
-public function genNewLedger(string note, Ledger prev) returns Ledger {
+function genNewLedger(string note, Ledger prev) returns Ledger {
     Ledger toreturn = {
         notice: note,
         noticeHash: crypto:hashSha512(note.toBytes()).toString(),
@@ -365,6 +387,7 @@ public function genNewLedger(string note, Ledger prev) returns Ledger {
     };
 
     return toreturn;
+}
 }
 
 // Prints `Hello World`.
