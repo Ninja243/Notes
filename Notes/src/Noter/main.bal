@@ -66,19 +66,34 @@ public type Ledger record {
     name: "Notes",
     path: "/"
 }
+
 listener http:Listener test = new (9090, config = {
 
     secureSocket: {
         keyStore: {
-            path: "/usr/lib/ballerina/ballerina-1.0.1/distributions/jballerina-1.0.1/bre/security/ballerinaKeystore.p12",
+            path: "C:/Program Files/Ballerina/ballerina-1.0.1/distributions/jballerina-1.0.1/bre/security/ballerinaKeystore.p12",
             password: "ballerina"
         },
         trustStore: {
-            path: "/usr/lib/ballerina/ballerina-1.0.1/distributions/jballerina-1.0.1/bre/security/ballerinaTruststore.p12",
+            path: "C:/Program Files/Ballerina/ballerina-1.0.1/distributions/jballerina-1.0.1/bre/security/ballerinaTruststore.p12",
             password: "ballerina"
         }
     }
 });
+
+//listener http:Listener test = new (9090, config = {
+//
+//    secureSocket: {
+//        keyStore: {
+//            path: "/usr/lib/ballerina/ballerina-1.0.1/distributions/jballerina-1.0.1/bre/security/ballerinaKeystore.p12",
+//            password: "ballerina"
+  //      },
+    //    trustStore: {
+      //      path: "/usr/lib/ballerina/ballerina-1.0.1/distributions/jballerina-1.0.1/bre/security/ballerinaTruststore.p12",
+        //    password: "ballerina"
+        //}
+    //}
+//});
 
 @kubernetes:Service {
     serviceType: "NodePort",
