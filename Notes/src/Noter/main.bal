@@ -125,7 +125,18 @@ service gossip on l {
     resource function setInstanceNumber(http:Caller c, http:Request r) returns error? {
     // Get int given
     // set TODO instance number to int
+
     //getting int, set instence to the one the int that was given
+    //json response = {
+        //"instanceNo": instanceNo
+    //};
+    //instanceNo = instenaceNo.r;
+    // json[] instanceJson;
+    //http:Client instan = new("http://localhost:8080");
+    // json[instanceJson.length()] = MyInstanceNumber;
+    // var r = c->respond(MyInstanceNumber);
+    //
+    
     }
     // TODO gossip init
     @http:ResourceConfig {
@@ -151,9 +162,10 @@ service gossip on l {
             string content = r.getContentType();
             //string baseType = mime:getMediaType(content);
             // If JSON, check for Ledger information, then add it to a the new ledger and to the data store
+
             // TODO
             if (content == "") {
-                
+                //
             }
         }
     }
