@@ -124,7 +124,7 @@ service gossip on l {
     resource function setInstanceNumber(http:Caller c, http:Request r) returns error? {
     // Get int given
     // set TODO instance number to int
-
+//-----trying some stuff that likely makes no sense
     //getting int, set instence to the one the int that was given
     //json response = {
         //"instanceNo": instanceNo
@@ -134,7 +134,14 @@ service gossip on l {
     //http:Client instan = new("http://localhost:8080");
     // json[instanceJson.length()] = MyInstanceNumber;
     // var r = c->respond(MyInstanceNumber);
-    //
+    // var newInstance = r.getJsonPayload();
+    //         if (newInstance is json) {
+
+    //         } else {
+    //             http:Response resp = new;
+    //             resp.setPayload("Error");
+    //             var x = c -> respond();
+    //         }
     
     }
     // TODO gossip init
@@ -163,10 +170,8 @@ service gossip on l {
             // If JSON, check for Ledger information, then add it to a the new ledger and to the data store
 
             // TODO
-<<<<<<< HEAD
             if (content == "") {
                 //
-=======
             var newGossip = r.getJsonPayload();
             if (newGossip is json) {
 
@@ -174,7 +179,6 @@ service gossip on l {
                 http:Response resp = new;
                 resp.setPayload("Error");
                 var x = c -> respond();
->>>>>>> 8528dd174186099946dd39c477c99021faf2db5f
             }
         }
     }
