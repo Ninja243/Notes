@@ -89,8 +89,6 @@ listener http:Listener test = new (9090, config = {
     name: "Notes"
 }
 
-// TODO Service for push/pull from db <- xD
-
 listener http:Listener l = new (9090);
 @http:ServiceConfig {
     basePath: "/notes"
@@ -146,7 +144,6 @@ service gossip on l {
 }
 
 // Get the date and add the right time record to the data store if it does not exist
-// TODO add month, add week
 public function addLedgerToDataStore(Ledger l) returns error? {
     time:Time currentTime = time:currentTime();
     string thisYear = time:getYear(currentTime).toString();
@@ -294,15 +291,41 @@ public function addLedgerToDataStore(Ledger l) returns error? {
 
     }
     // Make sure there are an appropriate amount of records nested (13 months would be illegal for example)
-    // TODO Panics, Month, Week, Day
     var Year = DataStore[thisYear];
     if (Year is year) {
+        // Look through the months stored to make sure there are the right amount of them
         if (Year.Month.length() > 12) {
         // Panic
-        }
-        if (Year.Month.length() < 0) {
+        } else if (Year.Month.length() < 0) {
         // Panic
+        } else {
+            // Year is ok
+            j = 0;
+            while (j<Year.Month.length()) {
+                // Look through the weeks stored to make sure there are the right amount of them
+                if (Year.Month[j].Week.length() > 52) {
+                    // Panic
+                } else if (Year.Month[j].Week.length() < 0) {
+                    // Panic
+                } else {
+                    // Month ok
+                    int i = 0;
+                    // Look through the days stored to make sure there are the right amount of them
+                    while (i<Year.Month[j].Week.length()) {
+                        if (Year.Month[j].Week[i].length() > 7) {
+                            // Panic
+                        } else if (Year.Month[j].Week[i].length() < 0) {
+                            // Panic
+                        } else {
+                            // Week ok, everything seems fine
+                        }
+                        i = i+1;
+                    }
+                }
+                j = j+1;
+            }
         }
+
     } else {
     // Panic
     }
