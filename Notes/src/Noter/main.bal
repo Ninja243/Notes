@@ -6,7 +6,8 @@ import ballerina/io;
 import ballerina/kubernetes;
 //import ballerina/lang.'error;
 import ballerina/time;
-//import ballerina/math;
+import ballerina/math;
+import ballerina/lang.'int as ints;
 //import ballerina/mime;
 //import ballerina/log;
 //import wso2/mongodb;
@@ -16,6 +17,8 @@ import ballerina/time;
 // 1-5 <- legal
 // 5<  <- illegal
 int myInstanceNumber = 0;
+// The listener port number is 9090 plus the instance number (simplifies service discovery later)
+int inport = 9090+myInstanceNumber;
 
 // Map of year records which contain up to 12 month records
 // each which contain up to 4 week records each which contain
@@ -65,6 +68,14 @@ public type Ledger record {
     name: "Notes",
     path: "/"
 }
+@kubernetes:Service {
+    serviceType: "NodePort",
+    name: "Notes"
+}
+@kubernetes:Deployment {
+    image: "localhost/Noter:v0.1",
+    name: "Notes"
+}
 
 listener http:Listener test = new (9091, config = {
 
@@ -94,16 +105,7 @@ listener http:Listener test = new (9091, config = {
     //}
 //});
 
-@kubernetes:Service {
-    serviceType: "NodePort",
-    name: "Notes"
-}
-@kubernetes:Deployment {
-    image: "localhost/Noter:v0.1",
-    name: "Notes"
-}
-
-listener http:Listener l = new (9090);
+listener http:Listener l = new http:Listener(inport);
 @http:ServiceConfig {
     basePath: "/notes"
 }
@@ -142,8 +144,22 @@ service gossip on new http:Listener(9090) {
     //             resp.setPayload("Error");
     //             var x = c -> respond();
     //         }
-    
+
+    http:Client cl = new ("http://localhost:4004");
+    var x = cl ->get("/getInstanceNumber");
+    if (x is error) {
+
+    } else {
+        var rw = x.getTextPayload();
+            if (rw is string){
+                var j = ints:fromString(rw);
+                if (j is int) {
+                myInstanceNumber = <@untainted>j;
+                }
+            }
+        }
     }
+    
     // TODO gossip init
     @http:ResourceConfig {
         methods: ["GET"]
@@ -158,6 +174,7 @@ service gossip on new http:Listener(9090) {
         if (x is error) {
             io:println(x);
         }
+        var t = shareGossip();
     }
     @http:ResourceConfig {
         methods: ["POST"],
@@ -172,17 +189,19 @@ service gossip on new http:Listener(9090) {
             // TODO
             if (content == "") {
                 //
-            var newGossip = r.getJsonPayload();
-            if (newGossip is json) {
+                var newGossip = r.getJsonPayload();
+                if (newGossip is json) {
 
-            } else {
-                http:Response resp = new;
-                resp.setPayload("Error");
-                var x = c -> respond();
+                } else {
+                    http:Response resp = new;
+                    resp.setPayload("Error");
+                    var x = c -> respond();
+                }
             }
         }
+        var t = shareGossip();
     }
-}
+
 
 // Get the date and add the right time record to the data store if it does not exist
 function addLedgerToDataStore(Ledger l) returns error? {
@@ -390,8 +409,25 @@ function genNewLedger(string note, Ledger prev) returns Ledger {
 }
 }
 
-// Prints `Hello World`.
-
-//public function main() {
-//   io:println("Hello World!");
-//}
+function shareGossip() returns error? {
+    if (myInstanceNumber == 0) {
+        // Instance not assigned so probably not part of a group
+    } else if (myInstanceNumber>0 && myInstanceNumber<6) {
+        var instanceToGossipWith = math:randomInRange(1,6);
+        // Make sure we don't gossip with ourself
+        while (instanceToGossipWith == myInstanceNumber){
+            instanceToGossipWith = math:randomInRange(1,6);
+        }
+        // TODO
+        if (instanceToGossipWith is int) {
+        string url = "http://localhost:";
+        int port = 9090+instanceToGossipWith;
+        url = url+port.toString();
+        http:Client ep = new http:Client(url);
+        } else {
+            io:println("Error getting a random number");
+        }
+    } else {
+        // Instance number not legal
+    }
+}

@@ -31,6 +31,17 @@ const GQDate = new GraphQLScalarType({
 
 Notices = {};
 
+// TODO
+// take graphQL request, find id (hash) or time range specified
+// send to random instance, receiving json
+// return json
+function getResource() { };
+
+// TODO Optoinal
+function refreshNotices() { 
+
+};
+
 // data store with default data
 // TODO db
 /*const Notices = [
