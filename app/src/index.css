@@ -42,3 +42,7 @@ h1, h2 {
     width:10em;
     padding:1em;
 }
+.left-margin {
+    margin-top: 10px;
+    margin-left:80px;
+}

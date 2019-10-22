@@ -29,16 +29,20 @@ class Wrapper extends React.Component {
       return this.props.render(this.state);
     }
   }
-  
+
   const App = () => {
     return (
       <Wrapper
-      //TODO the link needs to change to http://localhost:3000
+      //TODO the link needs to change to http://localhost:3000 visit typicode.com to see what json i used as an example
         link="https://jsonplaceholder.typicode.com/users"
         render={({ list, isLoading, error }) => (
           <div>
             <h1>Notes</h1>
-            <hr></hr>
+            <hr />
+            <br />
+            <div><input type="checkbox" /><text>    Notes of today</text></div>
+            <div><input type="checkbox" /><text>    Notes of this month</text></div>
+            <div><input type="checkbox" /><text>    Notes of this year</text></div>
             {error ? <p>{error.message}</p> : null}
             {isLoading ? (
               <h2>Loading...</h2>
@@ -48,13 +52,14 @@ class Wrapper extends React.Component {
                 //user needs to be note. 
                 //li key={user.id} needs to be li key={hash}. 
                 //Date needs to be {note.date}. 
+                //Date needs to be the time the note was posted
                 //{user.name} needs to be {note.note}
               <ul>{list.map(user => <li key={user.id}>
                   <div className="note">
-                      <h3>Title</h3><hr></hr>
-                      <p>Submitted on: Date</p>
+                      <h3>Title</h3><hr />
+                      <p>Created: Date @Time</p>
                       <p>{user.name}</p>
-                  </div>
+                  </div><input className="left-margin" type="checkbox" />
                 </li>)}</ul>
             )}
           </div>
