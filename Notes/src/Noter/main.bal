@@ -151,17 +151,13 @@ service gossip on l {
 
     } else {
         var rw = x.getTextPayload();
-        if (rw is string){
-            var j = ints:fromString(rw);
-        if (j is int) {
-            myInstanceNumber = <@untainted>j;
-        
+            if (rw is string){
+                var j = ints:fromString(rw);
+                if (j is int) {
+                myInstanceNumber = <@untainted>j;
+                }
+            }
         }
-        }
-        
-        
-
-    }
     }
     
     // TODO gossip init
@@ -192,17 +188,18 @@ service gossip on l {
             // TODO
             if (content == "") {
                 //
-            var newGossip = r.getJsonPayload();
-            if (newGossip is json) {
+                var newGossip = r.getJsonPayload();
+                if (newGossip is json) {
 
-            } else {
-                http:Response resp = new;
-                resp.setPayload("Error");
-                var x = c -> respond();
+                } else {
+                    http:Response resp = new;
+                    resp.setPayload("Error");
+                    var x = c -> respond();
+                }
             }
         }
     }
-}
+
 
 function shareGossip() returns error? {
     if (myInstanceNumber == 0) {
