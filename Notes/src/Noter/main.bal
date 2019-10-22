@@ -66,7 +66,7 @@ public type Ledger record {
     path: "/"
 }
 
-listener http:Listener test = new (9090, config = {
+listener http:Listener test = new (9091, config = {
 
     secureSocket: {
         keyStore: {
@@ -117,7 +117,7 @@ service testtube on l {
 @http:ServiceConfig {
     basePath: "/notes"
 }
-service gossip on l {
+service gossip on new http:Listener(9090) {
     @http:ResourceConfig {
         methods: ["POST"]
     }
