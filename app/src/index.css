@@ -1,7 +1,44 @@
-h1 {
+h1, h2 {
     text-align: center;
   }
-  
-h2 {
-    text-align: center;
+
+  *{
+    margin:0;
+    padding:0;
   }
+  body{
+    font-family:arial,sans-serif;
+    font-size:100%;
+    margin:3em;
+    background:#666;
+    color:#fff;
+  }
+  h3{
+    font-weight:normal;
+  }
+  p{
+    font-size:90%;
+    font-weight:normal;
+  }
+  ul,li{
+    list-style:none;
+  }
+  ul{
+    overflow:hidden;
+    padding:3em;
+  }
+
+  ul li{
+    margin:1em;
+    float:left;
+  }
+
+.note {
+    text-decoration:none;
+    color:#000;
+    background:#99ff66;
+    display:block;
+    height:10em;
+    width:10em;
+    padding:1em;
+}

@@ -33,6 +33,7 @@ class Wrapper extends React.Component {
   const App = () => {
     return (
       <Wrapper
+      //TODO the link needs to change to http://localhost:3000
         link="https://jsonplaceholder.typicode.com/users"
         render={({ list, isLoading, error }) => (
           <div>
@@ -42,34 +43,25 @@ class Wrapper extends React.Component {
             {isLoading ? (
               <h2>Loading...</h2>
             ) : (
-              <ul>{list.map(user => <li key={user.id}>{user.name}</li>)}</ul>
+                //TODO the info in the map should change from user data to note data
+                //info that needs to change: 
+                //user needs to be note. 
+                //li key={user.id} needs to be li key={hash}. 
+                //Date needs to be {note.date}. 
+                //{user.name} needs to be {note.note}
+              <ul>{list.map(user => <li key={user.id}>
+                  <div className="note">
+                      <h3>Title</h3><hr></hr>
+                      <p>Submitted on: Date</p>
+                      <p>{user.name}</p>
+                  </div>
+                </li>)}</ul>
             )}
           </div>
         )}
       />
     );
   }
-  
-  // class App extends React.Component {
-  //   render() {
-      // return (
-      //   <Wrapper
-      //     link="https://jsonplaceholder.typicode.com/users"
-      //     render={({ list, isLoading, error }) => (
-      //       <div>
-      //         <h2>Random Users</h2>
-      //         {error ? <p>{error.message}</p> : null}
-      //         {isLoading ? (
-      //           <h2>Loading...</h2>
-      //         ) : (
-      //           <ul>{list.map(user => <li key={user.id}>{user.name}</li>)}</ul>
-      //         )}
-      //       </div>
-      //     )}
-      //   />
-      // );
-  //   }
-  // }
   
   
   ReactDOM.render(<App />, document.getElementById("root"));
