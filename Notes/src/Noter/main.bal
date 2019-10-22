@@ -174,6 +174,7 @@ service gossip on l {
         if (x is error) {
             io:println(x);
         }
+        var t = shareGossip();
     }
     @http:ResourceConfig {
         methods: ["POST"],
@@ -198,31 +199,9 @@ service gossip on l {
                 }
             }
         }
+        var t = shareGossip();
     }
 
-
-function shareGossip() returns error? {
-    if (myInstanceNumber == 0) {
-        // Instance not assigned so probably not part of a group
-    } else if (myInstanceNumber>0 && myInstanceNumber<6) {
-        var instanceToGossipWith = math:randomInRange(1,6);
-        // Make sure we don't gossip with ourself
-        while (instanceToGossipWith == myInstanceNumber){
-            instanceToGossipWith = math:randomInRange(1,6);
-        }
-        // TODO
-        if (instanceToGossipWith is int) {
-        string url = "http://localhost:";
-        int port = 9090+instanceToGossipWith;
-        url = url+port.toString();
-        http:Client ep = new http:Client(url);
-        } else {
-            io:println("Error getting a random number");
-        }
-    } else {
-        // Instance number not legal
-    }
-}
 
 // Get the date and add the right time record to the data store if it does not exist
 function addLedgerToDataStore(Ledger l) returns error? {
@@ -428,4 +407,27 @@ function genNewLedger(string note, Ledger prev) returns Ledger {
 
     return toreturn;
 }
+}
+
+function shareGossip() returns error? {
+    if (myInstanceNumber == 0) {
+        // Instance not assigned so probably not part of a group
+    } else if (myInstanceNumber>0 && myInstanceNumber<6) {
+        var instanceToGossipWith = math:randomInRange(1,6);
+        // Make sure we don't gossip with ourself
+        while (instanceToGossipWith == myInstanceNumber){
+            instanceToGossipWith = math:randomInRange(1,6);
+        }
+        // TODO
+        if (instanceToGossipWith is int) {
+        string url = "http://localhost:";
+        int port = 9090+instanceToGossipWith;
+        url = url+port.toString();
+        http:Client ep = new http:Client(url);
+        } else {
+            io:println("Error getting a random number");
+        }
+    } else {
+        // Instance number not legal
+    }
 }
