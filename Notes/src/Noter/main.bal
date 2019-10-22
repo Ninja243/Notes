@@ -6,7 +6,8 @@ import ballerina/io;
 import ballerina/kubernetes;
 //import ballerina/lang.'error;
 import ballerina/time;
-//import ballerina/math;
+import ballerina/math;
+import ballerina/lang.'int as ints;
 //import ballerina/mime;
 //import ballerina/log;
 //import wso2/mongodb;
@@ -16,6 +17,8 @@ import ballerina/time;
 // 1-5 <- legal
 // 5<  <- illegal
 int myInstanceNumber = 0;
+// The listener port number is 9090 plus the instance number (simplifies service discovery later)
+int inport = 9090+myInstanceNumber;
 
 // Map of year records which contain up to 12 month records
 // each which contain up to 4 week records each which contain
@@ -65,6 +68,14 @@ public type Ledger record {
     name: "Notes",
     path: "/"
 }
+@kubernetes:Service {
+    serviceType: "NodePort",
+    name: "Notes"
+}
+@kubernetes:Deployment {
+    image: "localhost/Noter:v0.1",
+    name: "Notes"
+}
 
 listener http:Listener test = new (9090, config = {
 
@@ -94,20 +105,11 @@ listener http:Listener test = new (9090, config = {
     //}
 //});
 
-@kubernetes:Service {
-    serviceType: "NodePort",
-    name: "Notes"
-}
-@kubernetes:Deployment {
-    image: "localhost/Noter:v0.1",
-    name: "Notes"
-}
-
-listener http:Listener l = new (9090);
+listener http:Listener l = new http:Listener(inport);
 @http:ServiceConfig {
     basePath: "/notes"
 }
-service testtube on new http:Listener(9091) {
+service testtube on l {
     resource function testresource(http:Caller c, http:Request r, json test) {
 
     }
@@ -117,7 +119,7 @@ service testtube on new http:Listener(9091) {
 @http:ServiceConfig {
     basePath: "/notes"
 }
-service gossip on new http:Listener(9092) {
+service gossip on l {
     @http:ResourceConfig {
         methods: ["POST"]
     }
@@ -142,8 +144,26 @@ service gossip on new http:Listener(9092) {
     //             resp.setPayload("Error");
     //             var x = c -> respond();
     //         }
-    
+
+    http:Client cl = new ("http://localhost:4004");
+    var x = cl ->get("/getInstanceNumber");
+    if (x is error) {
+
+    } else {
+        var rw = x.getTextPayload();
+        if (rw is string){
+            var j = ints:fromString(rw);
+        if (j is int) {
+            myInstanceNumber = <@untainted>j;
+        
+        }
+        }
+        
+        
+
     }
+    }
+    
     // TODO gossip init
     @http:ResourceConfig {
         methods: ["GET"]
@@ -181,6 +201,29 @@ service gossip on new http:Listener(9092) {
                 var x = c -> respond();
             }
         }
+    }
+}
+
+function shareGossip() returns error? {
+    if (myInstanceNumber == 0) {
+        // Instance not assigned so probably not part of a group
+    } else if (myInstanceNumber>0 && myInstanceNumber<6) {
+        var instanceToGossipWith = math:randomInRange(1,6);
+        // Make sure we don't gossip with ourself
+        while (instanceToGossipWith == myInstanceNumber){
+            instanceToGossipWith = math:randomInRange(1,6);
+        }
+        // TODO
+        if (instanceToGossipWith is int) {
+        string url = "http://localhost:";
+        int port = 9090+instanceToGossipWith;
+        url = url+port.toString();
+        http:Client ep = new http:Client(url);
+        } else {
+            io:println("Error getting a random number");
+        }
+    } else {
+        // Instance number not legal
     }
 }
 
@@ -389,9 +432,3 @@ function genNewLedger(string note, Ledger prev) returns Ledger {
     return toreturn;
 }
 }
-
-// Prints `Hello World`.
-
-//public function main() {
-//   io:println("Hello World!");
-//}

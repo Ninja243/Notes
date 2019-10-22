@@ -35,6 +35,13 @@ app.get('/', function (req, res) {
   });
 });
 
+var instances = 0;
+
+app.get('/getInstanceNumber', function (req, res) {
+  instances = instances + 1;
+  res.send(instances);
+});
+
 app.get('/app.js', function (req, res) {
   res.sendFile('app.js', {
     root: __dirname + "/"
