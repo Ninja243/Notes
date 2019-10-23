@@ -59,10 +59,7 @@ public type Ledger record {
     string prevLedgerHash;
 };
 
-@docker:Config {
-    name: "Noter",
-    tag: "v0.1"
-}
+
 @kubernetes:Ingress {
     hostname: "localhost",
     name: "Notes",
@@ -105,6 +102,14 @@ listener http:Listener test = new (9091, config = {
     //}
 //});
 
+@docker:Config {
+    name: "Noter",
+    tag: "v0.1"
+}
+
+// This port should be exposed but it looks like ballerina doesn't like having variables as port numbers?
+
+//@docker:Expose {}
 listener http:Listener l = new http:Listener(inport);
 @http:ServiceConfig {
     basePath: "/notes"
@@ -115,11 +120,10 @@ service testtube on l {
     }
 }
 
-// TODO Gossip service here
 @http:ServiceConfig {
     basePath: "/notes"
 }
-service gossip on new http:Listener(9090) {
+service gossip on l {
     @http:ResourceConfig {
         methods: ["POST"]
     }
@@ -201,6 +205,41 @@ service gossip on new http:Listener(9090) {
         }
         var t = shareGossip();
     }
+
+}
+
+function genNewLedger(string note, Ledger prev) returns Ledger {
+    Ledger toreturn = {
+        notice: note,
+        noticeHash: crypto:hashSha512(note.toBytes()).toString(),
+        prevLedgerHash: prev.prevLedgerHash
+    };
+
+    return toreturn;
+}
+
+function shareGossip() returns error? {
+    if (myInstanceNumber == 0) {
+        // Instance not assigned so probably not part of a group
+    } else if (myInstanceNumber>0 && myInstanceNumber<6) {
+        var instanceToGossipWith = math:randomInRange(1,6);
+        // Make sure we don't gossip with ourself
+        while (instanceToGossipWith == myInstanceNumber){
+            instanceToGossipWith = math:randomInRange(1,6);
+        }
+        // TODO
+        if (instanceToGossipWith is int) {
+        string url = "http://localhost:";
+        int port = 9090+instanceToGossipWith;
+        url = url+port.toString();
+        http:Client ep = new http:Client(url);
+        } else {
+            io:println("Error getting a random number");
+        }
+    } else {
+        // Instance number not legal
+    }
+}
 
 
 // Get the date and add the right time record to the data store if it does not exist
@@ -395,39 +434,5 @@ function addLedgerToDataStore(Ledger l) returns error? {
     } else {
     // Panic
     io:println("Invalid option, oopsie");
-    }
-}
-
-function genNewLedger(string note, Ledger prev) returns Ledger {
-    Ledger toreturn = {
-        notice: note,
-        noticeHash: crypto:hashSha512(note.toBytes()).toString(),
-        prevLedgerHash: prev.prevLedgerHash
-    };
-
-    return toreturn;
-}
-}
-
-function shareGossip() returns error? {
-    if (myInstanceNumber == 0) {
-        // Instance not assigned so probably not part of a group
-    } else if (myInstanceNumber>0 && myInstanceNumber<6) {
-        var instanceToGossipWith = math:randomInRange(1,6);
-        // Make sure we don't gossip with ourself
-        while (instanceToGossipWith == myInstanceNumber){
-            instanceToGossipWith = math:randomInRange(1,6);
-        }
-        // TODO
-        if (instanceToGossipWith is int) {
-        string url = "http://localhost:";
-        int port = 9090+instanceToGossipWith;
-        url = url+port.toString();
-        http:Client ep = new http:Client(url);
-        } else {
-            io:println("Error getting a random number");
-        }
-    } else {
-        // Instance number not legal
     }
 }
