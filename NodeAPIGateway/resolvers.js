@@ -31,14 +31,29 @@ const GQDate = new GraphQLScalarType({
 
 Notices = {};
 
+function getNoteFromHash(id) {
+    var instanceToContact = Math.floor(Math.random() * 4 + 1);
+    var resp = await fetch("http://localhost:" + instanceToContact);
+};
+
+function getNoteFromDate() {};
+
+function getAllNotes() {
+    // random instance number
+    var instanceToContact = Math.floor(Math.random() * 4 + 1);
+    var resp = await fetch("http://localhost:" + instanceToContact);
+    var jsonFromResponse = await resp.json();
+    return jsonFromResponse;
+};
+
 // TODO
 // take graphQL request, find id (hash) or time range specified
 // send to random instance, receiving json
 // return json
-function getResource() { };
+function getResource() {};
 
 // TODO Optoinal
-function refreshNotices() { 
+function refreshNotices() {
 
 };
 
@@ -74,7 +89,34 @@ function refreshNotices() {
   }
 ];*/
 
+var instances = 5;
+
 const resolvers = {
+    Query: {
+        Notes: () => {
+            getAllNotes();
+        },
+        Note: (_, {
+            id
+        }) => {
+            getNoteFromHash(id);
+        }
+    },
+    Mutation: {
+        createNote: (root, args) => {
+
+        },
+        deleteNote: (root, args) => {
+
+        },
+        updateNote: (root, args) => {
+
+        },
+        GQDate
+    }
+};
+
+/*const resolvers = {
     Query: {
         Notices: () => Notices, // return all Notices
         Notice: (_, {
@@ -123,6 +165,6 @@ const resolvers = {
         }
     },
     GQDate
-};
+};*/
 
 module.exports.Resolvers = resolvers;
