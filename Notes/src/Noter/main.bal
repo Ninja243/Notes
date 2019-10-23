@@ -183,6 +183,75 @@ service gossip on l {
         var t = shareGossip();
     }
     @http:ResourceConfig {
+        methods: ["GET"]
+    }
+    resource function giveAllLedgers(http:Caller c, http:Request r) returns error? {
+        http:Response resp = new;
+        json allNotes = {"DataStore": DataStore.toString()};
+        // string[] keys = DataStore.keys();
+        // int j = 0;
+        // while (j<keys.length()) {
+        //     int i = 0;
+        //     while (i<DataStore[keys[j]].length()){
+
+        //     }
+        //     j = j+1;
+        //}
+        resp.setJsonPayload(allNotes);
+        var x = c->respond(resp);
+    }
+    @http:ResourceConfig {
+        methods: ["GET"]
+    }
+    resource function getSpecificLedger(http:Caller c, http:Request r) returns error? {
+
+    }
+    @http:ResourceConfig {
+        methods: ["GET"],
+        path: "/notes/{yearToGet}"
+    }
+    resource function getSpecificYear(http:Caller c, http:Request r, string yearToGet) returns error? {
+        http:Response resp = new;
+        resp.setPayload(DataStore[yearToGet].toString());
+        var x = c -> respond(resp);
+    }
+    @http:ResourceConfig {
+        methods: ["GET"],
+        path: "/notes/{yearToGet}/{monthToGet}"
+    }
+    resource function getSpecificMonth(http:Caller c, http:Request r, string yearToGet, string monthToGet) returns error? {
+        http:Response resp = new;
+        var s = ints:fromString(monthToGet);
+        if (s is int){
+        var Y = DataStore[yearToGet];
+        if (Y is year) {
+            resp.setPayload(Y.Month[s].toString());
+            var x = c -> respond(resp);}
+        }
+        
+    }
+    @http:ResourceConfig {
+        methods: ["GET"],
+        path: "/notes/{yearToGet}/{monthToGet}/{weekToGet}"
+    }
+    resource function getSpecificWeek(http:Caller c, http:Request r, string yearToGet, string monthToGet, string weekToGet) returns error? {
+         http:Response resp = new;
+        var s = ints:fromString(monthToGet);
+        if (s is int){
+        var Y = DataStore[yearToGet];
+        if (Y is year) {
+            resp.setPayload(Y.Month[s].toString());
+            var x = c -> respond(resp);}
+        }
+        
+    }
+    @http:ResourceConfig {
+        methods: ["GET"]
+    }
+    resource function getSpecificDay(http:Caller c, http:Request r) returns error? {
+        
+    }
+    @http:ResourceConfig {
         methods: ["POST"],
         path: "/giveLatest"
     }
@@ -437,4 +506,30 @@ function addLedgerToDataStore(Ledger l) returns error? {
     // Panic
     io:println("Invalid option, oopsie");
     }
+}
+
+public function yearMapToJson(map<year> m) returns error? {
+   
+}
+
+public function monthMapToJson(map<month> m) returns error? {
+
+}
+
+public function weekMapToJson(map<week> m) returns error? {
+
+}
+
+public function dayMapToJson(map<day> m) returns error? {
+    json toreturn = {};
+    string[] keys = m.keys();
+    int j = 0;
+    while (j<keys.length()) {
+        toreturn = {j:m.get(keys[j]).toString()};
+        j = j+1;
+    }
+}
+
+public function main() {
+    var t = shareGossip();
 }
