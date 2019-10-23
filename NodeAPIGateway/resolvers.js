@@ -35,7 +35,13 @@ function getNoteFromHash() {};
 
 function getNoteFromDate() {};
 
-function getAllNotes() {};
+function getAllNotes() {
+    // random instance number
+    var instanceToContact = Math.floor(Math.random() * 4 + 1);
+    var resp = await fetch("http://localhost:" + instanceToContact);
+    var jsonFromResponse = await resp.json();
+    
+};
 
 // TODO
 // take graphQL request, find id (hash) or time range specified

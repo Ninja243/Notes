@@ -1,1 +1,2 @@
-window.alert("Am here");
+document.getElementById("app").innerHTML = "<h1>React loaded and API online!</h1><pre id='testdata'></pre>";
+document.getElementById("testdata").innerText = await fetch("http://localhost:4004/graphql/");
