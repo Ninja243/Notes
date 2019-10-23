@@ -256,15 +256,25 @@ service gossip on l {
         methods: ["GET"],
         path: "/notes/{yearToGet}/{monthToGet}/{weekToGet}"
     }
+    // TODO
     resource function getSpecificWeek(http:Caller c, http:Request r, string yearToGet, string monthToGet, string weekToGet) returns error? {
          http:Response resp = new;
-        var s = ints:fromString(monthToGet);
-        if (s is int){
-        var Y = DataStore[yearToGet];
-        if (Y is year) {
-            resp.setPayload(Y.Month[s].toString());
-            var x = c -> respond(resp);}
-        }
+         resp.setPayload("");
+        var x = c -> respond(resp);
+        // var s = ints:fromString(monthToGet);
+        // if (s is int){
+        // var Y = DataStore[yearToGet];
+        // if (Y is year) {
+        //     var M = Y.Month[s];
+        //     var w = ints:fromString(weekToGet);
+        //     if (w is int) {
+        //     var W = M.week[w];
+        //     if (W is week) {
+        //         resp.setPayload(W.toString());
+        //         var x = c -> respond(resp);}
+        //     }
+        // }
+        
         
     }
     @http:ResourceConfig {
