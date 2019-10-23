@@ -125,7 +125,7 @@ listener http:Listener l = new http:Listener(inport);
     basePath: "/notes"
 }
 service gossip on l {
-    
+
     @http:ResourceConfig {
         methods: ["POST"]
     }
@@ -182,6 +182,28 @@ service gossip on l {
         }
         var t = shareGossip();
     }
+
+@http:ResourceConfig {
+        methods: ["POST"],
+        path:"/postLedger"
+    }
+    resource function postLedger(http:Caller c, http:Request r) returns error?{
+        var js = r.getJsonPayload();
+        if (js is json) {
+            Ledger n = {
+                notice: "",
+                prevLedgerHash: "",
+                noticeHash: ""
+            };
+           Ledger ledger = genNewLedger(js.toString(), n);
+            var mvc = addLedgerToDataStore(ledger);
+        }
+        http:Response resp = new;
+        resp.setPayload("Ledger generated!");
+        var x = c -> respond(resp);
+        
+    }
+
     @http:ResourceConfig {
         methods: ["GET"]
     }
