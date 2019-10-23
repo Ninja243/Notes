@@ -80,6 +80,8 @@ function refreshNotices() {
   }
 ];*/
 
+var instances = 5;
+
 const resolvers = {
     Query: {
         Notes: () => {
