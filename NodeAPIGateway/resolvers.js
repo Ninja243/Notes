@@ -31,7 +31,10 @@ const GQDate = new GraphQLScalarType({
 
 Notices = {};
 
-function getNoteFromHash() {};
+function getNoteFromHash(id) {
+    var instanceToContact = Math.floor(Math.random() * 4 + 1);
+    var resp = await fetch("http://localhost:" + instanceToContact);
+};
 
 function getNoteFromDate() {};
 
@@ -40,7 +43,7 @@ function getAllNotes() {
     var instanceToContact = Math.floor(Math.random() * 4 + 1);
     var resp = await fetch("http://localhost:" + instanceToContact);
     var jsonFromResponse = await resp.json();
-    
+    return jsonFromResponse;
 };
 
 // TODO

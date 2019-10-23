@@ -111,19 +111,21 @@ listener http:Listener test = new (9091, config = {
 
 //@docker:Expose {}
 listener http:Listener l = new http:Listener(inport);
-@http:ServiceConfig {
-    basePath: "/notes"
-}
-service testtube on l {
-    resource function testresource(http:Caller c, http:Request r, json test) {
+//listener http:Listener l = new http:Listener(inport);
+// @http:ServiceConfig {
+//     basePath: "/notes"
+// }
+// service testtube on l {
+//     resource function testresource(http:Caller c, http:Request r, json test) {
 
-    }
-}
+//     }
+// }
 
 @http:ServiceConfig {
     basePath: "/notes"
 }
 service gossip on l {
+    
     @http:ResourceConfig {
         methods: ["POST"]
     }
